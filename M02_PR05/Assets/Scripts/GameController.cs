@@ -29,14 +29,23 @@ namespace SpatialPartitionPattern
         int cellSize = 10;
 
         // Number of soldiers on each team
-        public int numberOfSoldiers = 100;
+        public SoldierAmountData soldierData;
+        private int numberOfSoldiers;
         public bool spatialPartition = false;
 
         // UI timer
+        public TextMeshProUGUI UIButtonText;
         public TextMeshProUGUI UItext;
+        private Color toggalOn;
+        private Color toggalOff;
 
         // The Spatial Partition grid
         Grid grid;
+
+        void Awake()
+        {
+            numberOfSoldiers = soldierData.amount;
+        }
 
         void Start()
         {
@@ -55,6 +64,8 @@ namespace SpatialPartitionPattern
                 friendlySoldiers.Add(new Friendly(newFriendly, mapWidth));
                 newFriendly.transform.parent = friendlyParent;
             }
+            toggalOn = Color.red;
+            toggalOff = Color.green;
         }
 
         void Update()
@@ -79,10 +90,14 @@ namespace SpatialPartitionPattern
             // For each friendly, find the closest enemy and change its color and chase it
             for (int i = 0; i < friendlySoldiers.Count; i++)
             {
-                if (!spatialPartition)
+                if (!spatialPartition) {
                     closestEnemy = FindClosestEnemySlow(friendlySoldiers[i]);
-                else
+                    UIButtonText.color = toggalOn;
+                }
+                else {
                     closestEnemy = grid.FindClosestEnemy(friendlySoldiers[i]);
+                    UIButtonText.color = toggalOff;
+                }
 
                 // If we found an enemy
                 if (closestEnemy != null)
@@ -125,6 +140,11 @@ namespace SpatialPartitionPattern
                 spatialPartition = false;
             else
                 spatialPartition = true;
+        }
+
+        public int soldierAmount()
+        {
+            return numberOfSoldiers;
         }
     }
 }
